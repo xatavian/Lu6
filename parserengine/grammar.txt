@@ -1,0 +1,107 @@
+Grammar and token summary for the template engine language
+================================================
+
+## Whitespaces:
+<space>, break-line (\n), tabulation (\t), carriage return (\r)
+WHITESPACE: (" " | "\n" | "\t" | "\r")
+
+## Comments
+Single line comments: "@// ..."
+Multi line comments: "@/* ... */@"
+
+## Tokens:
+
+### Single-character tokens
+LCURLY: "{"
+RCURLY: "}"
+LPAREN: "("
+RPAREN: ")"
+COMMA:  ","
+COLON:  ":"
+DOT: "."
+SEMICOLON: ";"
+STAR: "*"
+AMPERSAND: "&"
+
+### Double-character tokens
+DOUBLE_COLON: "::"
+ARROW: "->"
+
+### Triple-character tokens
+TRIPLE_QUOTES: "\"\"\""
+
+### Reserved words
+
+RESERVED_WORDS: ( <INCLUDE> | <PRINT> | <CLASS> | <CONSTRUCTOR> | <EXTENDS> | <ATTRIBUTE> | <METHOD>
+                | <FUNCTION> )
+General tokens:
+INCLUDE "@include"
+PRINT "@print"
+
+Class related tokens:
+CLASS: "@class"
+CONSTRUCTOR: "@constructor"
+EXTENDS: "@extends"
+ATTRIBUTE: "@attribute"
+METHOD: "@method"
+
+Function related tokens:
+FUNCTION: "@function"
+
+### Modifiers
+PRIVATE: "private"
+PUBLIC: "public"
+PROTECTED: "protected"
+STATIC: "static"
+CONST: "const"
+
+### Identifiers
+IDENTIFIER: ( <VARIABLE_IDENTIFIER> | <CODEGEN_IDENTIFIER> )
+VARIABLE_IDENTIFIER: "$" (<LETTER> | <DIGIT>) (<LETTER> | <DIGIT> | "_" | "$" )*
+CODEGEN_IDENTIFIER: ("_" | <LETTER> | <DIGIT>) ( "_" | "$" | <LETTER> | <DIGIT>)*
+LETTER: ["a"-"z", "A"-"Z"]
+DIGIT: ["0"-"9"]
+NON_ZERO_DIGIT: ["1" - "9"]
+
+### Literals
+LITERAL: ( <INT_LITERAL> | <STRING_LITERAL> )
+STRING_LITERAL: "\"" (<ESCAPED> | ~["\", "\\", "\n", "\r"])*  "\""
+ESCAPED: "\\" ("a" | "n" | "r" | "t" | "b" | "f" | "\"" )
+INT_LITERAL: (<DIGIT>)+
+
+## Grammar
+
+### General grammar
+qualifiedIdentifier := IDENTIFIER { ( DOT | DOUBLE_COLON ) IDENTIFIER }
+compilationUnit := { INCLUDE qualifiedIdentifier SEMICOLON }
+                   { typeDeclaration }
+                   EOF
+typeDeclaration := ( classDeclaration | functionDeclaration ) SEMICOLON
+typeList := type { COMMA type }
+type := qualifiedIdentifier { ( STAR | AMPERSAND ) }
+modifier := ( PUBLIC | PRIVATE | PROTECTED | STATIC | CONST )
+codegenSymbolsSeveralLines := codegenSymbolSeveralLines { codegenSymbolSeveralLines }
+codegenSymbolSeveralLines := every symbol except TRIPLE_QUOTES
+
+### Function related
+functionDeclaration := FUNCTION functionDeclarationDetails SEMICOLON
+functionDeclarationDetails := type qualifiedIdentifier arguments { block }
+arguments := LPAREN [ argument {COMMA argument} ] RPAREN
+argument  := qualifiedIdentifier [ qualifiedIdentifier ]
+block     := LCURLY { statement } RCURLY
+
+statement := ( printStatement ) SEMICOLON
+printStatement := PRINT ( longQuoteStatement | singleLineQuoteStatement )
+longQuoteStatement := TRIPLE_QUOTES codegenSymbolsSeveralLines TRIPLE_QUOTES
+singleLineQuoteStatement := STRING_LITERAL
+
+### Class related
+classDeclaration := { modifier } CLASS qualifiedIdentifier
+                    [ EXTENDS typeList ]
+                    { classBody }
+
+classBody := LCURLY { memberDeclaration } RCURLY
+memberDeclaration :=   CONSTRUCTOR arguments block
+                     | METHOD { COLON modifier } functionDeclarationDetails
+                     | ATTRIBUTE { COLON modifier } type variableDeclarator SEMICOLON
+                     | printStatement
