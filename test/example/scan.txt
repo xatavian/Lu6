@@ -1,0 +1,57 @@
+@include "<iostream>";
+
+@class $frame.name @extends FrameHandler {
+
+    @constructor(int a1) {
+        $unit1 = 4;
+
+        @print "2 + 2 = $unit1";
+
+        $unit1 *= 2;
+        @print "Now testing multiplication assignment: 4*2 = $unit1";
+
+        @// @print "Hello " + $unit1;
+        $unit1 += 2;
+        @print "Now testing addition assignment: 8 + 2 = $unit1";
+
+        $unit1 /= 2;
+        @print "Now testing division assignment: 10 / 2 = $unit1";
+
+        $unit1 -= 5;
+        @print "Now testing substraction assignment: 5 - 5 = $unit1";
+    };
+
+    @attribute:private,const,static void attribute1;
+
+    @method void example2() {
+
+    };
+
+    @method HelloMickel::Steak example(helloType hey) {
+        $a = 4;
+        $b = 4;
+
+        @while($a < 10) {
+
+            @if( $a == $b) {
+                @print "Equal";
+            }
+            @else @if($a > 6){
+                @print "Var A is above 6 (value = $a, value b = $b)";
+            }
+            @else @if($b < 3) {
+                @print "Var B is strictly less than 3 (value = $b, value a = $a)";
+            }
+            @else {
+                @print "No variable satisfies any of the constraints (a = $a / b = $b)";
+            }
+
+            $a += 1;
+            @if($a % 2 == 0)
+                $b *= 2;
+            @else
+                $b = ($b / 2) - 1;
+
+        }
+    };
+};

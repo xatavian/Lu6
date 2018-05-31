@@ -1,10 +1,9 @@
-import sys
-sys.path.append("..")
+import context
+import unittest
 
-from scanner import StringScanner
-from test.statements import StatementTester
+from example import ExampleTest
 
 if __name__ == "__main__":
-    scanner = StringScanner()
-    scanner.set_source("2 + 2")
-    StatementTester(scanner).start()
+    suite = unittest.TestSuiet()
+    suite.addTest(ExampleTest())
+    unittest.TextTestRunner().run(suite)
