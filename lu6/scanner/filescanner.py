@@ -34,6 +34,9 @@ class FileScanner(Scanner):
 
         return result
 
+    def cleanup(self):
+        self._sourcefile.close()
+
     @property
     def filename(self):
         return self._filename if self._filename is not None else ""

@@ -46,51 +46,54 @@ class Scanner(object):
         except EOFException:
             return tokens.get_eof_token(self.current_line)
 
-        try:
-            # -- Match special tokens
-            i = 2
-            while i > 0:
+        # -- Match special tokens
+        i = 2
+        while i > 0:
+            src_string = ""
+            try:
                 src_string = ""
                 for j in range(i):
                     src_string += self.next_char()
 
                 if tokens.SpecialTokens.has(src_string):
                     return tokens.get_special_token(self.current_line, src_string)
-                else:
-                    for c in reversed(src_string):
-                        self.save_char(c)
-                i -= 1
+            except EOFException:
+                pass
 
-            # -- Match instructions keywords
-            src_string = self.next_char()
-            if src_string == "@":
-                src_string += self.read_identifier()
-                if tokens.ReservedWordsTokens.has(src_string):
-                    return tokens.get_reserved_word_token(self.current_line, src_string)
-                else:
-                    raise UnrecognizedTokenException("{} is not a valid token".format(src_string), self.current_line)
+            for c in reversed(src_string):
+                self.save_char(c)
+            i -= 1
 
-            # -- Match string literal
-            elif src_string == "\"":
-                #  TODO: Match enhanced string literals
-                self.save_char(src_string)
-                src_string = self.read_string_literal()
-                return tokens.get_literal(self.current_line, src_string)
-            elif src_string.isdigit() or src_string == ".":
-                self.save_char(src_string)
-                src_string = self.read_number_literal()
-                return tokens.get_literal(self.current_line, src_string)
-
-            # -- Match non-instruction keywords or identifiers
+        # -- Match instructions keywords
+        src_string = self.next_char()
+        if src_string == "@":
+            src_string += self.read_identifier()
+            if tokens.ReservedWordsTokens.has(src_string):
+                return tokens.get_reserved_word_token(self.current_line, src_string)
             else:
-                self.save_char(src_string)
-                src_string = self.read_identifier()
-                if tokens.ReservedWordsTokens.has(src_string):
-                    return tokens.get_reserved_word_token(self.current_line, src_string)
-                else:
-                    return tokens.get_identifier_token(self.current_line, src_string)
-        except EOFException:
-            raise EOFException(self.current_line, "EOF was unexpectedly reached while scanning tokens")
+                raise UnrecognizedTokenException("{} is not a valid token".format(src_string), self.current_line)
+
+        # -- Match string literal
+        elif src_string == "\"":
+            #  TODO: Match enhanced string literals
+            self.save_char(src_string)
+            src_string = self.read_string_literal()
+            return tokens.get_literal(self.current_line, src_string)
+
+        # - Match int literal
+        elif src_string.isdigit() or src_string == ".":
+            self.save_char(src_string)
+            src_string = self.read_number_literal()
+            return tokens.get_literal(self.current_line, src_string)
+
+        # -- Match non-instruction keywords or identifiers
+        else:
+            self.save_char(src_string)
+            src_string = self.read_identifier()
+            if tokens.ReservedWordsTokens.has(src_string):
+                return tokens.get_reserved_word_token(self.current_line, src_string)
+            else:
+                return tokens.get_identifier_token(self.current_line, src_string)
 
     def skip_comments(self):
         """
@@ -138,45 +141,56 @@ class Scanner(object):
         return result
 
     def read_identifier(self):
-        result = self.next_char()
-        if result == "$":
-            result += self.next_char()
+        result = ""
+        try:  # Stop when EOF is reached
+            result = self.next_char()
+            if result == "$":
+                result += self.next_char()
+            while ScannerHelper.is_identifier(result):
+                result += self.next_char()
 
-        while ScannerHelper.is_identifier(result):
-            result += self.next_char()
-
-        self.save_char(result[-1])
-        return result[:-1]
+            self.save_char(result[-1])
+            return result[:-1]
+        except EOFException:
+            return result
 
     def read_number_literal(self):
-        result = self.next_char()
+        result = ""
+        try:
+            result = self.next_char()
+            while ScannerHelper.is_number(result):
+                temp = self.next_char()
+                if not temp.isspace():
+                    result += temp
+                else:
+                    self.save_char(temp)
+                    return result
 
-        while ScannerHelper.is_number(result):
-            temp = self.next_char()
-            if not temp.isspace():
-                result += temp
-            else:
-                self.save_char(temp)
-                return result
-
-        self.save_char(result[-1])
-        return result[:-1]
+            self.save_char(result[-1])
+            return result[:-1]
+        except EOFException:
+            return result
 
     def read_string_literal(self):
         result = ""
-        temp = self.next_char()
+        try:
+            temp = self.next_char()
 
-        if temp != "\"":
-            raise InvalidLiteralException("Trying to tokenize a invalid string literal")
+            if temp != "\"":
+                raise InvalidLiteralException("Trying to tokenize a invalid string literal")
 
-        while not ScannerHelper.is_string_literal(result):
-            if temp.startswith("\\"):
-                pass  # TODO: handle escaped characters
-            else:
-                result += temp
-                temp = self.next_char()
+            while not ScannerHelper.is_string_literal(result):
+                if temp.startswith("\\"):
+                    pass  # TODO: handle escaped characters
+                else:
+                    result += temp
+                    temp = self.next_char()
 
-        self.save_char(temp)
+            self.save_char(temp)
+        except EOFException:
+            if len(result) < 2 or result[0] != "\"" or result[-1] != "\"":
+                raise InvalidLiteralException("Encountered EOF while scanning a string literal")
+
         return result
 
     def read_enhanced_string_literal(self):
