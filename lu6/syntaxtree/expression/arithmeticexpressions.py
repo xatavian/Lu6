@@ -64,6 +64,13 @@ class EqualsExpression(ArithmeticExpression):
         return lhs == rhs
 
 
+class NotEqualExpression(ArithmeticExpression):
+    string_operator = "!="
+
+    def get_value_operation(self, lhs, rhs):
+        return lhs != rhs
+
+
 class GreaterExpression(ArithmeticExpression):
     string_operator = ">="
 
