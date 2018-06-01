@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TokenInfo(object):
     def __init__(self, name, image):
         self.name = name
@@ -15,6 +16,7 @@ class TokenInfo(object):
 
     def __repr__(self):
         return self.image
+
 
 class Token(object):
     def __init__(self, type, image, line):
@@ -100,6 +102,7 @@ class SpecialTokens(TokenEnum):
     DoubleColonToken = TokenInfo("DOUBLE_COLON", "::")
     ArrowToken = TokenInfo("ARROW", "->")
     EqualsToken = TokenInfo("EQUALS", "==")
+    NotEqualToken = TokenInfo("NOT_EQUALS", "!=")
     OrToken = TokenInfo("OR", "||")
     AndToken = TokenInfo("AND", "&&")
     GreaterToken = TokenInfo("GREATER", ">=")
@@ -130,6 +133,10 @@ class ReservedWordsTokens(TokenEnum):
     ProtectedToken = TokenInfo("RES_PROTECTED_MODIFIER", "protected")
     StaticToken = TokenInfo("RES_STATIC_MODIFIER", "static")
     ConstToken = TokenInfo("RES_CONST_MODIFIER", "const")
+
+    # C++ Special values
+    TrueToken = TokenInfo("RES_TRUE", "true")
+    FalseToken = TokenInfo("RES_FALSE", "false")
 
     # Empty token, used for identifying scanner errors
     NullToken = TokenInfo("RES_NULL", "")
