@@ -1,10 +1,7 @@
 from .parser import Parser
 from ..tokens import tokens
-from ..syntaxtree import AssignementExpression, AssignmentMultiplicationExpression, AssignmentAdditionExpression, \
-                        AssignmentDivisionExpression, AssignmentSubtractionExpression, AssignmentRemainderExpression, \
-                        OrExpression, AndExpression, EqualsExpression, SmallerExpression, GreaterExpression, \
-                        StrictGreaterExpression, StrictSmallerExpression, AdditionExpression, SubtractionExpression, \
-                        DivisionExpression, MultiplicationExpression, RemainderExpression, Variable, FieldSelection
+from ..syntaxtree.expression import *
+from ..syntaxtree import Variable, FieldSelection
 
 from .identifierparser import IdentifierParser
 from .literalparser import LiteralParser
@@ -60,34 +57,38 @@ class ExpressionParser(Parser):
     def parse_equality_expression(self):
         line = self.parserhelper.current_line
         result = self.parse_relational_expression()
-        while self.current_token_is(tokens.SpecialTokens.EqualsToken):
-            self.get_next_token()
-            result = EqualsExpression(line, result, self.parse_relational_expression())
+        while self.current_token_is_one_of([tokens.SpecialTokens.EqualsToken, tokens.SpecialTokens.NotEqualToken]):
+            if self.current_token_is(tokens.SpecialTokens.EqualsToken):
+                self.get_next_token()
+                result = EqualsExpression(line, result, self.parse_relational_expression())
+            elif self.current_token_is(tokens.SpecialTokens.NotEqualToken):
+                self.get_next_token()
+                result = NotEqualExpression(line, result, self.parse_relational_expression())
 
         return result
 
     def parse_relational_expression(self):
         line = self.parserhelper.current_line
-        result = self.parse_addition_operation()
+        result = self.parse_addition_expression()
         while self.current_token_is_one_of([tokens.SpecialTokens.LessToken, tokens.SpecialTokens.StrictLessToken,
                                             tokens.SpecialTokens.GreaterToken, tokens.SpecialTokens.StrictGreaterToken]):
 
             if self.current_token_is(tokens.SpecialTokens.LessToken):
                 self.get_next_token()
-                result = SmallerExpression(line, result, self.parse_addition_operation())
+                result = SmallerExpression(line, result, self.parse_addition_expression())
             elif self.current_token_is(tokens.SpecialTokens.StrictLessToken):
                 self.get_next_token()
-                result = StrictSmallerExpression(line, result, self.parse_addition_operation())
+                result = StrictSmallerExpression(line, result, self.parse_addition_expression())
             elif self.current_token_is(tokens.SpecialTokens.GreaterToken):
                 self.get_next_token()
-                result = GreaterExpression(line, result, self.parse_addition_operation())
+                result = GreaterExpression(line, result, self.parse_addition_expression())
             elif self.current_token_is(tokens.SpecialTokens.StrictGreaterToken):
                 self.get_next_token()
-                result = StrictGreaterExpression(line, result, self.parse_addition_operation())
+                result = StrictGreaterExpression(line, result, self.parse_addition_expression())
 
         return result
 
-    def parse_addition_operation(self):
+    def parse_addition_expression(self):
         line = self.parserhelper.current_line
         result = self.parse_multiplicative_expression()
         while self.current_token_is_one_of([tokens.SpecialTokens.PlusToken, tokens.SpecialTokens.MinusToken]):
@@ -148,5 +149,6 @@ class ExpressionParser(Parser):
             return self.parse_par_expression()
         elif self.current_token_is_one_of(tokens.LiteralTokens):
             return LiteralParser(self.parserhelper).parse_literal()
-
+        elif self.current_token_is(tokens.SpecialTokens.EOFToken):
+            raise ParserEngineException("EOF was encountered whereas a primary expression was expected", line)
         raise ParserEngineException("No primary expression was found (token {})".format(self.current_token), line)
