@@ -194,6 +194,13 @@ CodegenValidTokenList = [
 ]
 
 
+def get_truth_token(line, image):
+    if image == "true":
+        return Token(ReservedWordsTokens.TrueToken.value, True, line)
+    elif image == "false":
+        return Token(ReservedWordsTokens.FalseToken.value, False, line)
+
+
 def get_token(collection, image, line):
     for token in collection:
         if token.value.has_image(image):

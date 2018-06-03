@@ -145,6 +145,8 @@ class ExpressionParser(Parser):
                 return FieldSelection(line, expression)
             else:
                 return Variable.from_qualified_identifier(expression)
+        elif self.current_token_is(tokens.IdentifierTokens.CodegenIdentifier):
+            return IdentifierParser(self.parserhelper).parse_single_identifier()
         elif self.current_token_is(tokens.SpecialTokens.LParenToken):
             return self.parse_par_expression()
         elif self.current_token_is_one_of(tokens.LiteralTokens):

@@ -80,8 +80,8 @@ class Lu6Engine(object):
         Key must start with $
         """
         if not isinstance(key, str):
-            raise TemplateEngineException("External content must have keys of type str")
+            raise TemplateEngineException("External content must have keys of type str", -1)
         elif not key.startswith("$"):
-            raise TemplateEngineException("External content must have keys of starting with \"$\"")
+            raise TemplateEngineException("External content must have keys of starting with \"$\"", -1)
         else:
             self._external_content.add(ContextEntry(-1, key, value))

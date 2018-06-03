@@ -91,7 +91,10 @@ class Scanner(object):
             self.save_char(src_string)
             src_string = self.read_identifier()
             if tokens.ReservedWordsTokens.has(src_string):
-                return tokens.get_reserved_word_token(self.current_line, src_string)
+                if src_string == "true" or src_string == "false":
+                    return tokens.get_truth_token(self.current_line, src_string)
+                else:
+                    return tokens.get_reserved_word_token(self.current_line, src_string)
             else:
                 return tokens.get_identifier_token(self.current_line, src_string)
 

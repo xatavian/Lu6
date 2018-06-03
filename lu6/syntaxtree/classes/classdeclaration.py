@@ -29,7 +29,7 @@ class ClassDeclaration(ASTNode):
         output_stream.print("class ", "h_file", base_indent)
         self._className.codegen(output_stream, base_indent)
 
-        if self._extendsClass != "":
+        if self._extendsClass is not None:
             output_stream.print(": public ", "h_file")
             self._extendsClass.codegen(output_stream, base_indent)
 

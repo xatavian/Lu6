@@ -22,3 +22,11 @@ class IdentifierParser(Parser):
             self.get_next_token()
 
         return qualified_identifier
+
+    def parse_single_identifier(self):
+        self.current_token_must_be_one_of(tokens.IdentifierTokensList)
+        qualified_identifier = QualifiedIdentifier(self.parserhelper.current_line)
+        qualified_identifier.add_identifier(self.current_token)
+        self.get_next_token()
+
+        return qualified_identifier
