@@ -188,7 +188,7 @@ While loops are not followed by a semi-colon.
 * `@println <expression>;` prints the result of the expression and adds a new line.
 * `@instruction <expression>;` prints the result of the expression, adds a semi-colon and a new line.
 
-*Note: `@println` and `@instruction` are not implemented yet.
+*Note: `@println` and `@instruction` are not implemented yet.*
 
 **Example:**
 

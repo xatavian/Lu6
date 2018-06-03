@@ -66,7 +66,7 @@ Considering that *hello_world.lu6* contain the following code:
 };
 ```
 
-*hello_world.cpp would contain:
+*hello_world.cpp* would contain:
 ```c++
 class HelloWorldClass {
     HelloWorldClass() {
