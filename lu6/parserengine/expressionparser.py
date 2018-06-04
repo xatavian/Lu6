@@ -1,5 +1,6 @@
 from .parser import Parser
 from ..tokens import tokens
+
 from ..syntaxtree.expression import *
 from ..syntaxtree import Variable, FieldSelection
 
@@ -139,8 +140,8 @@ class ExpressionParser(Parser):
         if self.current_token_is(tokens.IdentifierTokens.VariableIdentifier):
             expression = IdentifierParser(self.parserhelper).parse_identifier(allow_double_colon=False)
             if self.current_token_is(tokens.SpecialTokens.LParenToken):
-                # TODO: parse message expression
-                pass
+                call_params = self.parse_call_parameters()
+                return MessageExpression(line, expression, call_params)
             elif expression.is_field_selection:
                 return FieldSelection(line, expression)
             else:
@@ -154,3 +155,18 @@ class ExpressionParser(Parser):
         elif self.current_token_is(tokens.SpecialTokens.EOFToken):
             raise ParserEngineException("EOF was encountered whereas a primary expression was expected", line)
         raise ParserEngineException("No primary expression was found (token {})".format(self.current_token), line)
+
+    def parse_call_parameters(self):
+        parameters = []
+        self.current_token_must_be(tokens.SpecialTokens.LParenToken)
+        self.get_next_token()
+
+        while not self.current_token_is(tokens.SpecialTokens.RParenToken):
+            parameters.append(self.parse_expression())
+            if self.current_token_is(tokens.SpecialTokens.CommaToken):
+                self.get_next_token()
+                # TODO: enforce that a comma is always followed by a expression
+
+        self.current_token_must_be(tokens.SpecialTokens.RParenToken)
+        self.get_next_token()
+        return parameters
