@@ -20,8 +20,8 @@ class Block(Statement):
             else:
                 statement.get_value()
 
-            if not output_stream.h_is_newline:
-                output_stream.newline("h_file")
+        if not output_stream.h_is_newline:
+            output_stream.newline("h_file")
 
         # output_stream.print("}", "h_file", base_indent)
 
