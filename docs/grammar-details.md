@@ -1,7 +1,7 @@
 Understand Lu6's Grammar
 ========================
 
-*The complete grammar is available in docs/grammar.txt file*.
+*The BNF grammar is available in docs/grammar.txt file (currently not up to date)*.
 
 ## Comments
 
@@ -188,8 +188,6 @@ While loops are not followed by a semi-colon.
 * `@println <expression>;` prints the result of the expression and adds a new line.
 * `@instruction <expression>;` prints the result of the expression, adds a semi-colon and a new line.
 
-*Note: `@println` and `@instruction` are not implemented yet.*
-
 **Example:**
 
 ```
@@ -213,4 +211,3 @@ public:
 };
 */@
 ```
-
