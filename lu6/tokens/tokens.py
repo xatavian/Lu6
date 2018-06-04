@@ -123,6 +123,8 @@ class ReservedWordsTokens(TokenEnum):
     IncludeToken = TokenInfo("RES_INCLUDE", "@include")
     MethodToken = TokenInfo("RES_METHOD", "@method")
     PrintToken = TokenInfo("RES_PRINT", "@print")
+    PrintlnToken = TokenInfo("RES_PRINTLN", "@println")
+    InstructionToken = TokenInfo("RES_INSTRUCTION", "@instruction")
     IfToken = TokenInfo("RES_IF", "@if")
     ElseToken = TokenInfo("RES_ELSE", "@else")
     WhileToken = TokenInfo("RES_WHILE", "@while")

@@ -1,7 +1,7 @@
 from .parser import Parser
 from ..tokens import tokens
 
-from .textparser import TextParser
+from .printparser import PrintParser
 from .expressionparser import ExpressionParser
 
 from ..syntaxtree.statements import *
@@ -14,8 +14,15 @@ class StatementParser(Parser):
         result = None
 
         if self.current_token_is(tokens.ReservedWordsTokens.PrintToken):
+            result = PrintParser(self.parserhelper).parse_print_statement()
+            self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
             self.get_next_token()
-            result = TextParser(self.parserhelper).parse_text_statement()
+        elif self.current_token_is(tokens.ReservedWordsTokens.PrintlnToken):
+            result = PrintParser(self.parserhelper).parse_println_statement()
+            self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
+            self.get_next_token()
+        elif self.current_token_is(tokens.ReservedWordsTokens.InstructionToken):
+            result = PrintParser(self.parserhelper).parse_instruction_statement()
             self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
             self.get_next_token()
         elif self.current_token_is(tokens.ReservedWordsTokens.IfToken):

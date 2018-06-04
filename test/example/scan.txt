@@ -24,7 +24,7 @@
     @attribute:private,const,static void attribute1;
 
     @method void example2() {
-
+      @instruction "hey";
     };
 
     @method HelloMickel::Steak example(helloType hey) {
