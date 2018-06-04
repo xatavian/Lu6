@@ -6,6 +6,7 @@ from ..tokens import tokens
 from .classparser import ClassParser
 from .functionparser import FunctionParser
 from .literalparser import LiteralParser
+from .expressionparser import ExpressionParser
 
 from ..syntaxtree import CompilationUnit
 from ..exceptions import ParserEngineException
@@ -22,7 +23,7 @@ class CompilationUnitParser(Parser):
         include_list = []
         while self.current_token_is(tokens.ReservedWordsTokens.IncludeToken):
             self.get_next_token()
-            include_list.append(LiteralParser(self.parserhelper).parse_string_literal())
+            include_list.append(ExpressionParser(self.parserhelper).parse_expression())
             self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
             self.get_next_token()
 

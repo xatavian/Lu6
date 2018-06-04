@@ -23,7 +23,7 @@ class CompilationUnit(ASTNode):
     def codegen(self, output_stream, base_indent=0):
         for include in self._includes_list:
             output_stream.print("#include ", "h_file", base_indent)
-            output_stream.print(include, "h_file", base_indent)
+            include.codegen(output_stream, base_indent)
             output_stream.newline("h_file")
 
         output_stream.newline("h_file")

@@ -33,10 +33,7 @@ class QualifiedIdentifier(ASTNode):
     def get_value(self):
         result = ""
         for word in self._identifiers[:-1]:
-            if word.has_type(tokens.IdentifierTokens.VariableIdentifier.value):
-                result += self.context.get_value(word.image).value
-            else:
-                result += str(word.image)
+            result += str(word.image)
         return result
 
     def get_raw_value(self):
