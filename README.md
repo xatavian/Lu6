@@ -75,7 +75,7 @@ class HelloWorldClass {
 };
 ```
 
-For more details about what can be achieved in a Lu6 file, see the [Grammer details](docs/grammar-details.md)
+For more details about what can be achieved in a Lu6 file, see the [Grammar details](docs/grammar-details.md)
 
 ## Want to contribute ?
 
