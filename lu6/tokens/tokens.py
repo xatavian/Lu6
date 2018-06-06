@@ -118,6 +118,7 @@ class ReservedWordsTokens(TokenEnum):
     AttributeToken = TokenInfo("RES_ATTRIBUTE", "@attribute")
     ClassToken = TokenInfo("RES_CLASS", "@class")
     ConstructorToken = TokenInfo("RES_CONSTRUCTOR", "@constructor")
+    CategoryToken = TokenInfo("RES_CATEGORY", "@category")
     ExtendsToken = TokenInfo("RES_EXTENDS", "@extends")
     FunctionToken = TokenInfo("RES_FUNCTION", "@function")
     IncludeToken = TokenInfo("RES_INCLUDE", "@include")

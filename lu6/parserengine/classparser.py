@@ -10,7 +10,8 @@ from .functionparser import FunctionParser
 from .statementparser import StatementParser
 
 # AST imports
-from ..syntaxtree import ClassBody, ClassDeclaration, ConstructorDeclaration, MethodDeclaration, AttributeDeclaration
+from ..syntaxtree import AttributeDeclaration, Block, ClassCategory, ClassBody, \
+                         ClassDeclaration, ConstructorDeclaration, MethodDeclaration
 from ..syntaxtree.classes import accessmodifier
 
 
@@ -48,7 +49,6 @@ class ClassParser(Parser):
         members = []
         while not self.current_token_is(tokens.SpecialTokens.RCurlyToken):
             members.append(self.parse_member_declaration())
-            self.get_next_token()
 
         self.current_token_is(tokens.SpecialTokens.RCurlyToken)
         self.get_next_token()
@@ -94,8 +94,17 @@ class ClassParser(Parser):
 
             attribute_type, attribute_name = self.parse_attribute_declaration()
             result = AttributeDeclaration(line, modifiers, attribute_type, attribute_name)
-        
+
+        elif self.current_token_is(tokens.ReservedWordsTokens.CategoryToken):
+            self.get_next_token()
+
+            category_name = ExpressionParser(self.parserhelper).parse_expression()
+            body = self.parse_category_body()
+
+            result = ClassCategory(line, category_name, body)
+
         self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
+        self.get_next_token()
         return result
 
     def parse_access_modifier(self):
@@ -138,3 +147,18 @@ class ClassParser(Parser):
         attr_name = IdentifierParser(self.parserhelper).parse_qualified_identifier()
 
         return attr_type, attr_name
+
+    def parse_category_body(self):
+        line = self.parserhelper.current_line
+
+        self.current_token_must_be(tokens.SpecialTokens.LCurlyToken)
+        self.get_next_token()
+
+        statements = []
+        while not self.current_token_is(tokens.SpecialTokens.RCurlyToken):
+            statements.append(self.parse_member_declaration())
+
+        self.current_token_must_be(tokens.SpecialTokens.RCurlyToken)
+        self.get_next_token()
+
+        return Block(line, statements)

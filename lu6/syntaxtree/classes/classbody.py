@@ -2,6 +2,7 @@ from ..astnode import ASTNode
 from .attributedeclaration import AttributeDeclaration
 from .methoddeclaration import MethodDeclaration
 from .constructordeclaration import ConstructorDeclaration
+from .classcategory import ClassCategory
 from .accessmodifier import PUBLIC, PRIVATE, PROTECTED, STATIC, CONST
 
 class ClassBody(ASTNode):
@@ -19,6 +20,7 @@ class ClassBody(ASTNode):
         methods = list(
             filter(lambda mem: isinstance(mem, MethodDeclaration) or isinstance(mem, ConstructorDeclaration),
                    self._members))
+        categories = filter(lambda mem: isinstance(mem, ClassCategory), self._members)
 
         meths = [
             list(filter(lambda meth: PUBLIC in meth.modifiers, methods)),
@@ -52,6 +54,9 @@ class ClassBody(ASTNode):
                     output_stream.newline("h_file")
                     set_header = False
                 attr.codegen(output_stream, base_indent + 2)
+
+        for category in categories:
+            category.codegen(output_stream, base_indent)
 
         output_stream.print("}", "h_file", base_indent)
 
