@@ -175,24 +175,43 @@ class Scanner(object):
             return result
 
     def read_string_literal(self):
-        result = ""
         try:
             temp = self.next_char()
 
             if temp != "\"":
-                raise InvalidLiteralException("Trying to tokenize a invalid string literal")
+                raise InvalidLiteralException("Trying to tokenize a invalid string literal", self.current_line)
 
-            while not ScannerHelper.is_string_literal(result):
-                if temp.startswith("\\"):
-                    pass  # TODO: handle escaped characters
+            result = "\""
+            temp = self.next_char()
+            while True:
+                if temp == "\n":
+                    raise InvalidLiteralException("End of line was encountered in the middle of a string literal", self.current_line)
+                elif temp.startswith("\\"):
+                    temp = self.next_char()
+                    if temp == "n":
+                        result += '\n'
+                    elif temp == "\"":
+                        result += "\""
+                    elif temp == "t":
+                        result += "\t"
+                    elif temp == "r":
+                        result += "\r"
+                    elif temp == "a":
+                        result += "\a"
+                    elif temp == "\\":
+                        result += "\\"
+                    else:
+                        raise InvalidLiteralException("Unrecognized escaped sequence was defined ({})".format("\\" + temp), self.current_line)
+                    temp = self.next_char()
                 else:
                     result += temp
-                    temp = self.next_char()
-
-            self.save_char(temp)
+                    if temp != "\"":
+                        temp = self.next_char()
+                    else:
+                        break
         except EOFException:
             if len(result) < 2 or result[0] != "\"" or result[-1] != "\"":
-                raise InvalidLiteralException("Encountered EOF while scanning a string literal")
+                raise InvalidLiteralException("Encountered EOF while scanning a string literal", self.current_line)
 
         return result
 
