@@ -24,8 +24,8 @@ class OutputStreamFactory(object):
     def to_stdout():
         stream = OutputStream()
         stream._type = OutputStream.TO_STDOUT
-        stream._h_stream = sys.stdout
-        stream._cpp_stream = sys.stdout
+        stream._h_stream = StringIO()
+        stream._cpp_stream = StringIO()
         OutputStreamFactory.open_streams.append(stream)
         return stream
 

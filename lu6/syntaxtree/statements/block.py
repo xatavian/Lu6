@@ -30,6 +30,10 @@ class Block(Statement):
         for statement in self._statements:
             statement.analyse(self.context)
 
+    @property
+    def statements(self):
+        return self._statements
+
     def __str__(self):
         result = "BlockStatement: { "
         for statement in self._statements:

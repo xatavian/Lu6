@@ -1,4 +1,5 @@
 from ..functiondeclaration import FunctionDeclaration
+from .accessmodifier import CONST, STATIC
 
 
 class MethodDeclaration(FunctionDeclaration):
@@ -15,6 +16,15 @@ class MethodDeclaration(FunctionDeclaration):
     def __init__(self, line, modifiers, return_type, name, arguments, body):
         super().__init__(line, return_type, name, arguments, body)
         self._modifiers = modifiers
+
+    def codegen(self, output_stream, base_indent=0):
+        if CONST in self._modifiers:
+            #output_stream.print("const ", "h_file", base_indent)
+            print("Warning: const modifier used at line {} but is not yet supported".format(self.line))
+        if STATIC in self._modifiers:
+            output_stream.print("static ", "h_file", base_indent)
+
+        super().codegen(output_stream, base_indent)
 
     @property
     def modifiers(self):

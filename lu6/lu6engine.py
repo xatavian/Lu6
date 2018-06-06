@@ -71,7 +71,10 @@ class Lu6Engine(object):
             OutputStreamFactory.cleanup()
             scanner.cleanup()
             return result_cpp, result_h
-
+        elif self._output_type == Lu6Engine.OUTPUT_TO_STDOUT:
+            result_cpp, result_h = stream.cpp_stream.getvalue(), stream.h_stream.getvalue()
+            print(result_h)
+            print(result_cpp)
         OutputStreamFactory.cleanup()
         scanner.cleanup()
 
