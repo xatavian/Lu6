@@ -24,7 +24,7 @@ class ClassParser(Parser):
         self.get_next_token()
 
         # Get the class name
-        class_name = ExpressionParser(self.parserhelper).parse_primary_expression()
+        class_name = ExpressionParser(self.parserhelper).parse_expression()
 
         # Get the extends name
         extends_name = None
@@ -94,6 +94,7 @@ class ClassParser(Parser):
 
             attribute_type, attribute_name = self.parse_attribute_declaration()
             result = AttributeDeclaration(line, modifiers, attribute_type, attribute_name)
+        
         self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
         return result
 
