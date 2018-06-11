@@ -2,7 +2,7 @@ from .expression import Expression
 from ...exceptions import TypeCheckingException, TemplateEngineException
 from ..general_interfaces import IGetValue, IValueHolder
 
-# Same as for the Statement class
+
 class BinaryExpression(Expression):
     string_operator = None
 
@@ -37,10 +37,12 @@ class BinaryExpression(Expression):
         if self.lhs is None:
             raise TypeCheckingException("The left hand side of an expression must always be specified")
         else:
-            self.lhs.analyse(context)
+            self.lhs = self.lhs.analyse(context)
 
         if self.rhs is not None:
-            self.rhs.analyse(context)
+            self.rhs = self.rhs.analyse(context)
+
+        return self
 
     def custom_analysis(self):
         # Override this method in order to provide additional analysis

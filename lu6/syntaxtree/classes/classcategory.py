@@ -14,10 +14,12 @@ class ClassCategory(ASTNode):
     def analyse(self, context=None):
         print("Analysis")
         self.context = context
-        self._name.analyse(self.context)
+        self._name = self._name.analyse(self.context)
 
         if self._body is not None:
-            self._body.analyse(self.context)
+            self._body = self._body.analyse(self.context)
+
+        return self
 
     @property
     def declarations(self):

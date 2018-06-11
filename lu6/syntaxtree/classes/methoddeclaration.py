@@ -1,5 +1,5 @@
 from ..functiondeclaration import FunctionDeclaration
-from .accessmodifier import CONST, STATIC
+from lu6.syntaxtree.modifier import CONST, STATIC
 
 
 class MethodDeclaration(FunctionDeclaration):
@@ -29,3 +29,6 @@ class MethodDeclaration(FunctionDeclaration):
     @property
     def modifiers(self):
         return self._modifiers
+
+    def analyse(self, context=None):
+        return super().analyse(context)

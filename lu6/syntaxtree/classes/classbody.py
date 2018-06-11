@@ -2,7 +2,7 @@ from ..astnode import ASTNode
 from .attributedeclaration import AttributeDeclaration
 from .methoddeclaration import MethodDeclaration
 from .classcategory import ClassCategory
-from .accessmodifier import PUBLIC, PRIVATE, PROTECTED, STATIC, CONST
+from lu6.syntaxtree.modifier import PUBLIC, PRIVATE, PROTECTED
 
 
 class ClassBody(ASTNode):
@@ -45,25 +45,27 @@ class ClassBody(ASTNode):
     def analyse(self, context=None):
         self.context = context
 
-        for member in self._members:
-            member.analyse(context)
+        for i, member in enumerate(self._members):
+            self._members[i] = member.analyse(context)
+            analyzed_member = self._members[i]
+            if isinstance(analyzed_member, AttributeDeclaration):
+                if PUBLIC in analyzed_member.modifiers:
+                    self._attributes_categories["public"].declarations.append(analyzed_member)
+                elif PROTECTED in analyzed_member.modifiers:
+                    self._attributes_categories["protected"].declarations.append(analyzed_member)
+                elif PRIVATE in analyzed_member.modifiers:
+                    self._attributes_categories["private"].declarations.append(analyzed_member)
 
-            if isinstance(member, AttributeDeclaration):
+            elif isinstance(analyzed_member, MethodDeclaration):
                 if PUBLIC in member.modifiers:
-                    self._attributes_categories["public"].declarations.append(member)
+                    self._method_categories["public"].declarations.append(analyzed_member)
                 elif PROTECTED in member.modifiers:
-                    self._attributes_categories["protected"].declarations.append(member)
+                    self._method_categories["protected"].declarations.append(analyzed_member)
                 elif PRIVATE in member.modifiers:
-                    self._attributes_categories["private"].declarations.append(member)
+                    self._method_categories["private"].declarations.append(analyzed_member)
 
-            elif isinstance(member, MethodDeclaration):
-                if PUBLIC in member.modifiers:
-                    self._method_categories["public"].declarations.append(member)
-                elif PROTECTED in member.modifiers:
-                    self._method_categories["protected"].declarations.append(member)
-                elif PRIVATE in member.modifiers:
-                    self._method_categories["private"].declarations.append(member)
+            elif isinstance(analyzed_member, ClassCategory):
+                self._other_categories.append(analyzed_member)
 
-            elif isinstance(member, ClassCategory):
-                self._other_categories.append(member)
+        return self
 

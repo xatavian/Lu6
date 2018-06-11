@@ -13,7 +13,7 @@ class FieldSelection(Expression):
 
     def analyse(self, context=None):
         self.context = context
-        self._target.analyse(self.context)
+        self._target = self._target.analyse(self.context)
 
     def get_value(self):
         target_value = self._target.get_value()

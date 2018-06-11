@@ -27,8 +27,9 @@ class Block(Statement):
 
     def analyse(self, context=None):
         self.context = self.create_context(context)
-        for statement in self._statements:
-            statement.analyse(self.context)
+        for i, statement in enumerate(self._statements):
+            self._statements[i] = statement.analyse(self.context)
+        return self
 
     @property
     def statements(self):

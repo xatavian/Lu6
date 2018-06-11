@@ -12,7 +12,7 @@ from .statementparser import StatementParser
 # AST imports
 from ..syntaxtree import AttributeDeclaration, Block, ClassCategory, ClassBody, \
                          ClassDeclaration, ConstructorDeclaration, MethodDeclaration
-from ..syntaxtree.classes import accessmodifier
+from lu6.syntaxtree import modifier
 
 
 class ClassParser(Parser):
@@ -62,7 +62,7 @@ class ClassParser(Parser):
         if self.current_token_is(tokens.ReservedWordsTokens.ConstructorToken):
             self.get_next_token()
 
-            modifiers = [accessmodifier.PUBLIC]
+            modifiers = [modifier.PUBLIC]
             if self.current_token_is(tokens.SpecialTokens.ColonToken):
                 self.get_next_token()
                 modifiers = self.parse_access_modifier()
@@ -76,7 +76,7 @@ class ClassParser(Parser):
         elif self.current_token_is(tokens.ReservedWordsTokens.MethodToken):
             self.get_next_token()
 
-            modifiers = [accessmodifier.PUBLIC]
+            modifiers = [modifier.PUBLIC]
             if self.current_token_is(tokens.SpecialTokens.ColonToken):
                 self.get_next_token()
                 modifiers = self.parse_access_modifier()
@@ -87,7 +87,7 @@ class ClassParser(Parser):
         elif self.current_token_is(tokens.ReservedWordsTokens.AttributeToken):
             self.get_next_token()
 
-            modifiers = [accessmodifier.PRIVATE]
+            modifiers = [modifier.PRIVATE]
             if self.current_token_is(tokens.SpecialTokens.ColonToken):
                 self.get_next_token()
                 modifiers = self.parse_access_modifier()
@@ -125,15 +125,15 @@ class ClassParser(Parser):
 
         while self.current_token_is_one_of(legal_tokens_list):
             if self.current_token_is(tokens.ReservedWordsTokens.PublicToken):
-                result.append(accessmodifier.PUBLIC)
+                result.append(modifier.PUBLIC)
             elif self.current_token_is(tokens.ReservedWordsTokens.PrivateToken):
-                result.append(accessmodifier.PRIVATE)
+                result.append(modifier.PRIVATE)
             elif self.current_token_is(tokens.ReservedWordsTokens.ProtectedToken):
-                result.append(accessmodifier.PROTECTED)
+                result.append(modifier.PROTECTED)
             elif self.current_token_is(tokens.ReservedWordsTokens.StaticToken):
-                result.append(accessmodifier.STATIC)
+                result.append(modifier.STATIC)
             elif self.current_token_is(tokens.ReservedWordsTokens.ConstToken):
-                result.append(accessmodifier.CONST)
+                result.append(modifier.CONST)
 
             self.get_next_token()
             if self.current_token_is(tokens.SpecialTokens.CommaToken):

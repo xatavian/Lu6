@@ -10,8 +10,10 @@ class CompilationUnit(ASTNode):
     def analyse(self, context=None):
         self.context = Context(context)
 
-        for typeDecl in self._typesDeclaration:
-            typeDecl.analyse(self.context)
+        for i, typeDecl in enumerate(self._typesDeclaration):
+            self._typesDeclaration[i] = typeDecl.analyse(self.context)
+
+        return self
 
     def __init__(self, filename, line, includes_list, type_declarations):
         super().__init__(line)

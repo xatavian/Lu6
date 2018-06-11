@@ -23,6 +23,12 @@ class ASTNode(object):
         return Context(parent)
 
     def analyse(self, context=None):
+        """
+        Analysis of the AST Node.
+        The method must allow tree rewriting by returning a reference
+        to the resulting node of the analysis. This result can obviously
+        be the node itself if no tree rewriting is necessary.
+        """
         raise NotImplementedError()
 
     def codegen(self, output_stream, base_indent=0):

@@ -26,11 +26,13 @@ class IfStatement(Statement):
     def analyse(self, context=None):
         self.context = context
 
-        self._condition.analyse(context)
+        self._condition = self._condition.analyse(context)
 
-        self._if_body.analyse(context)
+        self._if_body = self._if_body.analyse(context)
         if self._else_body is not None:
-            self._else_body.analyse(context)
+            self._else_body = self._else_body.analyse(context)
+
+        return self
 
     def __str__(self):
         return self.__repr__()

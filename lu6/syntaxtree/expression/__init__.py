@@ -3,3 +3,4 @@ from .arithmeticexpressions import *
 from .assignmentexpressions import *
 from .fieldselection import FieldSelection
 from .messageexpression import MessageExpression
+from .expression import Expression

@@ -29,5 +29,5 @@ class Literal(IValueHolder, ASTNode):
         output_stream.print(self.value, "h_file", base_indent)
 
     def analyse(self, context=None):
-        pass
+        return self
 

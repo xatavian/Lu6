@@ -15,15 +15,17 @@ class ClassDeclaration(ASTNode):
     def analyse(self, context=None):
         self.context = self.create_context(context)
 
-        self._className.analyse(self.context)
+        self._className = self._className.analyse(self.context)
         if self._extendsClass is not None:
-            self._extendsClass.analyse(self.context)
+            self._extendsClass = self._extendsClass.analyse(self.context)
 
         self.context.add(ContextEntry(self.line, ClassDeclaration.ClassNameVariableName, self._className))
         self.context.add(ContextEntry(self.line, ClassDeclaration.ExtendsNameVariableName, self._extendsClass))
 
         if self._classBody is not None:
-            self._classBody.analyse(self.context)
+            self._classBody = self._classBody.analyse(self.context)
+
+        return self
 
     def codegen(self, output_stream, base_indent=0):
         output_stream.print("class ", "h_file", base_indent)

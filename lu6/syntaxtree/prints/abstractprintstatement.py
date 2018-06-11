@@ -12,9 +12,10 @@ class AbstractPrintStatement(Statement):
 
     def analyse(self, context=None):
         self.context = context
-        self._text.analyse(self.context)
+        self._text = self._text.analyse(self.context)
+        return self
 
-    def codegen(self, output_stream, base_indent):
+    def codegen(self, output_stream, base_indent=0):
         raise NotImplementedError()
 
     @property

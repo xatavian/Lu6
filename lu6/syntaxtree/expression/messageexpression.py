@@ -1,6 +1,8 @@
 from .expression import Expression
+from .fieldselection import FieldSelection
 from ...exceptions import TemplateEngineException
 from ..variable import Variable
+
 
 class MessageExpression(Expression):
 
@@ -29,9 +31,9 @@ class MessageExpression(Expression):
 
     def analyse(self, context=None):
         self.context = context
-        self._function.analyse(self.context)
+        self._function = self._function.analyse(self.context)
 
         # TODO: check that self._params has the same number of params that
         #       self._function requires
-        for param in self._params:
-            param.analyse(self.context)
+        for i, param in enumerate(self._params):
+            self._params[i] = param.analyse(self.context)

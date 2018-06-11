@@ -43,6 +43,7 @@ class Variable(IGetValue, ASTNode):
         if not self._is_valid():
             raise TemplateEngineException("{} has not been declared in this scope".format(self.name),
                                           self.line)
+        return self
 
     def analyse_as_lhs(self, context=None):
         if self.context is None:
@@ -51,6 +52,7 @@ class Variable(IGetValue, ASTNode):
         if not self._is_valid():
             self._corresponding_entry = ContextEntry(self.line, self.name)
             context.add(self._corresponding_entry)
+        return self
 
     def update_value(self, value):
         if self._corresponding_entry is not None:

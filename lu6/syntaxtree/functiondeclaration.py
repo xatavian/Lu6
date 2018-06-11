@@ -1,5 +1,5 @@
 from .astnode import ASTNode
-from ..contexttable import Context
+
 
 class FunctionDeclaration(ASTNode):
     def __init__(self, line, returnType, name, arguments, body):
@@ -64,9 +64,11 @@ class FunctionDeclaration(ASTNode):
         output_stream.newline("h_file")
 
     def analyse(self, context=None):
-        self.context = Context(context)
-        for arg in self._arguments:
-            arg.analyse(context)
+        self.context = self.create_context(context)
+        for i, arg in enumerate(self._arguments):
+            self._arguments[i] = arg.analyse(context)
 
         if self._body is not None:
-            self._body.analyse(self.context)
+            self._body = self._body.analyse(self.context)
+
+        return self

@@ -1,5 +1,6 @@
 from ..astnode import ASTNode
-from .accessmodifier import PUBLIC, CONST, STATIC, PRIVATE, PROTECTED
+from lu6.syntaxtree.modifier import CONST, STATIC
+
 
 class AttributeDeclaration(ASTNode):
 

@@ -14,6 +14,8 @@ class ConstructorDeclaration(MethodDeclaration):
         self.name = context.get_value(ClassDeclaration.ClassNameVariableName).value
         self.extends = context.get_value(ClassDeclaration.ExtendsNameVariableName).value
 
+        return self
+
 
     def codegen(self, output_stream, base_indent=0):
         self.name.codegen(output_stream, base_indent)

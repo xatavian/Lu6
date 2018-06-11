@@ -46,5 +46,7 @@ class QualifiedIdentifier(ASTNode):
             if variable.image not in context:
                 raise TypeCheckingException("{} was not declared in this scope".format(variable.image), self.line)
 
+        return self
+
     def __str__(self):
         return "".join([str(id.image) for id in self._identifiers[:-1]])
