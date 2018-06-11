@@ -11,7 +11,7 @@ class QualifiedIdentifier(ASTNode):
 
     @property
     def identifiers(self):
-        return self._identifiers[:-1] if len(self._identifiers) > 0 else self._identifiers
+        return self._identifiers if len(self._identifiers) > 0 else self._identifiers
 
     @property
     def is_field_selection(self):
@@ -19,25 +19,24 @@ class QualifiedIdentifier(ASTNode):
                len(self._identifiers) > 2
 
     def add_identifier(self, identifier, separator_type = None):
-        self._identifiers.append(identifier)
+        if separator_type is not None:
+            self._identifiers.append(separator_type)
 
+        self._identifiers.append(identifier)
         if identifier.has_type(tokens.IdentifierTokens.VariableIdentifier.value):
             self._variable_identifier_positions.append(len(self._identifiers) - 1)
-
-        if separator_type is None:
-            self._identifiers.append(tokens.Token(tokens.SpecialTokens.DotToken.value, ".", self.line))
 
     def codegen(self, output_stream, base_indent=0):
         output_stream.print(self.get_value(), "h_file", base_indent)
 
     def get_value(self):
         result = ""
-        for word in self._identifiers[:-1]:
+        for word in self._identifiers:
             result += str(word.image)
         return result
 
     def get_raw_value(self):
-        return "".join(str(token.image) for token in self._identifiers[:-1])
+        return "".join(str(token.image) for token in self._identifiers)
 
     def analyse(self, context=None):
         self.context = context
@@ -49,4 +48,4 @@ class QualifiedIdentifier(ASTNode):
         return self
 
     def __str__(self):
-        return "".join([str(id.image) for id in self._identifiers[:-1]])
+        return "".join(str(id.image) for id in self._identifiers)

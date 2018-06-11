@@ -1,4 +1,4 @@
-from .astnode import ASTNode
+from lu6.syntaxtree.astnode import ASTNode
 
 
 class FormalParameter(ASTNode):

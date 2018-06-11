@@ -2,9 +2,10 @@ from .compilationunit import CompilationUnit
 from .statements import *
 from .prints import *
 from .classes import *
-from .functiondeclaration import FunctionDeclaration
+from lu6.syntaxtree.functions.functiondeclaration import FunctionDeclaration
 from .qualifiedidentifier import QualifiedIdentifier
-from .formalparameter import FormalParameter
+from lu6.syntaxtree.functions.formalparameter import FormalParameter
 from .literals import *
 from .variable import Variable
 from .expression import *
+from .functions import *

@@ -37,7 +37,7 @@ class FunctionParser(Parser):
         self.get_next_token()
 
         while not self.current_token_is(tokens.SpecialTokens.RParenToken):
-            arg_type = IdentifierParser(self.parserhelper).parse_qualified_identifier()
+            arg_type = IdentifierParser(self.parserhelper).parse_type()
             arg_name = IdentifierParser(self.parserhelper).parse_qualified_identifier()
             arguments.append(FormalParameter(line, arg_type, arg_name))
 

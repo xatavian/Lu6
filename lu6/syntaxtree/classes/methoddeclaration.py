@@ -1,4 +1,4 @@
-from ..functiondeclaration import FunctionDeclaration
+from lu6.syntaxtree.functions.functiondeclaration import FunctionDeclaration
 from lu6.syntaxtree.modifier import CONST, STATIC
 
 
