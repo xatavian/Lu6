@@ -163,9 +163,9 @@ class WhitespaceTokens(TokenEnum):
     TabToken = TokenInfo("TAB", "\t")
 
 
-IdentifierTokensList = [
-    IdentifierTokens.CodegenIdentifier,
-    IdentifierTokens.VariableIdentifier
+StatementTokens = [
+    ReservedWordsTokens.WhileToken,
+    ReservedWordsTokens.IfToken
 ]
 
 CodegenValidTokenList = [

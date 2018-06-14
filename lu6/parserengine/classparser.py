@@ -12,7 +12,7 @@ from .statementparser import StatementParser
 # AST imports
 from ..syntaxtree import AttributeDeclaration, Block, ClassCategory, ClassBody, \
                          ClassDeclaration, ConstructorDeclaration, MethodDeclaration
-from lu6.syntaxtree import modifier
+from lu6.syntaxtree import modifier, IfStatement
 
 
 class ClassParser(Parser):
@@ -103,6 +103,12 @@ class ClassParser(Parser):
 
             result = ClassCategory(line, category_name, body)
 
+        elif self.current_token_is_one_of(tokens.StatementTokens):
+            return self.parse_statement_member()  # Skip ending semicolon
+
+        elif self.current_token_is(tokens.SpecialTokens.LCurlyToken):
+            return self.parse_class_block()  # Skip ending semicolon
+
         self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
         self.get_next_token()
         return result
@@ -142,7 +148,6 @@ class ClassParser(Parser):
         return result
 
     def parse_attribute_declaration(self):
-        self.current_token_must_be_one_of(tokens.IdentifierTokensList)
         attr_type = IdentifierParser(self.parserhelper).parse_qualified_identifier()
         attr_name = IdentifierParser(self.parserhelper).parse_qualified_identifier()
 
@@ -151,6 +156,35 @@ class ClassParser(Parser):
     def parse_category_body(self):
         line = self.parserhelper.current_line
 
+        self.current_token_must_be(tokens.SpecialTokens.LCurlyToken)
+        self.get_next_token()
+
+        statements = []
+        while not self.current_token_is(tokens.SpecialTokens.RCurlyToken):
+            statements.append(self.parse_member_declaration())
+
+        self.current_token_must_be(tokens.SpecialTokens.RCurlyToken)
+        self.get_next_token()
+
+        return Block(line, statements)
+
+    def parse_statement_member(self):
+        line = self.parserhelper.current_line
+        if self.current_token_is(tokens.ReservedWordsTokens.WhileToken):
+            pass
+        elif self.current_token_is(tokens.ReservedWordsTokens.IfToken):
+            self.get_next_token()
+            condition = ExpressionParser(self.parserhelper).parse_par_expression()
+            if_body = self.parse_member_declaration()
+            else_body = None
+            if self.current_token_is(tokens.ReservedWordsTokens.ElseToken):
+                self.get_next_token()
+                else_body = self.parse_member_declaration()
+
+            return IfStatement(line, condition, if_body, else_body)
+
+    def parse_class_block(self):
+        line = self.parserhelper.current_line
         self.current_token_must_be(tokens.SpecialTokens.LCurlyToken)
         self.get_next_token()
 

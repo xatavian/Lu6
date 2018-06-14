@@ -23,7 +23,7 @@ class ClassBody(ASTNode):
             "private": ClassCategory(line, "private")
         }
 
-        self._other_categories = []
+        self._other_statements = []
 
     def codegen(self, output_stream, base_indent=0):
         output_stream.print("{", "h_file")
@@ -37,8 +37,11 @@ class ClassBody(ASTNode):
         self._attributes_categories["protected"].codegen(output_stream, base_indent)
         self._attributes_categories["private"].codegen(output_stream, base_indent)
 
-        for category in self._other_categories:
-            category.codegen(output_stream, base_indent)
+        for statement in self._other_statements:
+            if isinstance(statement, ClassCategory):
+                statement.codegen(output_stream, base_indent)
+            else:
+                statement.codegen(output_stream, base_indent + 2)
 
         output_stream.print("}", "h_file", base_indent)
 
@@ -64,8 +67,9 @@ class ClassBody(ASTNode):
                 elif PRIVATE in member.modifiers:
                     self._method_categories["private"].declarations.append(analyzed_member)
 
-            elif isinstance(analyzed_member, ClassCategory):
-                self._other_categories.append(analyzed_member)
+            # elif isinstance(analyzed_member, ClassCategory):
+            else:
+                self._other_statements.append(analyzed_member)
 
         return self
 

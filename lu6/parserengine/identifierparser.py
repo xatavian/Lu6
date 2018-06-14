@@ -7,10 +7,14 @@ from ..tokens import tokens
 class IdentifierParser(Parser):
 
     def parse_qualified_identifier(self):
-        self.current_token_must_be_one_of(tokens.IdentifierTokensList)
         return self.parse_identifier(True)
 
     def parse_identifier(self, allow_double_colon):
+        self.current_token_must_be_one_of([
+            tokens.IdentifierTokens.CodegenIdentifier,
+            tokens.IdentifierTokens.VariableIdentifier
+        ])
+
         qualified_identifier = QualifiedIdentifier(self.parserhelper.current_line)
         qualified_identifier.add_identifier(self.current_token)
         self.get_next_token()
@@ -18,7 +22,10 @@ class IdentifierParser(Parser):
         while True:
             if self.current_token_is(tokens.SpecialTokens.DotToken):
                 self.get_next_token()
-                self.current_token_must_be_one_of(tokens.IdentifierTokensList)
+                self.current_token_must_be_one_of([
+                    tokens.IdentifierTokens.CodegenIdentifier,
+                    tokens.IdentifierTokens.VariableIdentifier
+                ])
                 qualified_identifier.add_identifier(
                     self.current_token,
                     tokens.Token(tokens.SpecialTokens.DotToken.value, ".", self.parserhelper.current_line)
@@ -26,7 +33,10 @@ class IdentifierParser(Parser):
                 self.get_next_token()
             elif allow_double_colon and self.current_token_is(tokens.SpecialTokens.DoubleColonToken):
                 self.get_next_token()
-                self.current_token_must_be_one_of(tokens.IdentifierTokensList)
+                self.current_token_must_be_one_of([
+                    tokens.IdentifierTokens.CodegenIdentifier,
+                    tokens.IdentifierTokens.VariableIdentifier
+                ])
                 qualified_identifier.add_identifier(
                     self.current_token,
                     tokens.Token(tokens.SpecialTokens.DoubleColonToken.value, "::", self.parserhelper.current_line)
@@ -38,7 +48,10 @@ class IdentifierParser(Parser):
         return qualified_identifier
 
     def parse_single_identifier(self):
-        self.current_token_must_be_one_of(tokens.IdentifierTokensList)
+        self.current_token_must_be_one_of([
+            tokens.IdentifierTokens.CodegenIdentifier,
+            tokens.IdentifierTokens.VariableIdentifier
+        ])
         qualified_identifier = QualifiedIdentifier(self.parserhelper.current_line)
         qualified_identifier.add_identifier(self.current_token)
         self.get_next_token()
@@ -63,7 +76,9 @@ class IdentifierParser(Parser):
                 done = False
                 modifiers.append(REFERENCE)
                 self.get_next_token()
-            elif type_name is None and self.current_token_is_one_of(tokens.IdentifierTokensList):
+            elif type_name is None and self.current_token_is_one_of([
+                tokens.IdentifierTokens.VariableIdentifier, tokens.IdentifierTokens.CodegenIdentifier
+            ]):
                 done = False
                 type_name = self.parse_qualified_identifier()
 

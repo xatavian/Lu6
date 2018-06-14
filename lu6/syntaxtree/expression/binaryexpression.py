@@ -37,10 +37,10 @@ class BinaryExpression(Expression):
         if self.lhs is None:
             raise TypeCheckingException("The left hand side of an expression must always be specified")
         else:
-            self.lhs = self.lhs.analyse(context)
+            self._lhs = self._lhs.analyse(context)
 
         if self.rhs is not None:
-            self.rhs = self.rhs.analyse(context)
+            self._rhs = self._rhs.analyse(context)
 
         return self
 
