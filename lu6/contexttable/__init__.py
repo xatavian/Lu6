@@ -1,2 +1,2 @@
-from .context import Context
+from .context import *
 from .contextentry import ContextEntry

@@ -1,6 +1,6 @@
 from ..astnode import ASTNode
 from lu6.syntaxtree.modifier import CONST, STATIC
-
+from ...contexttable import MemberContext
 
 class AttributeDeclaration(ASTNode):
 
@@ -15,7 +15,12 @@ class AttributeDeclaration(ASTNode):
         return self._modifiers
 
     def analyse(self, context=None):
-        self.context = context
+        self.context = context.build_child(MemberContext)
+
+        self._type = self._type.analyse(self.context)
+        self._name = self._name.analyse(self.context)
+
+        return self
 
     def codegen(self, output_stream, base_indent=0):
 

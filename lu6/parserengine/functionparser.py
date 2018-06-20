@@ -3,6 +3,7 @@ from ..tokens import tokens
 
 from .identifierparser import IdentifierParser
 from .statementparser import StatementParser
+from .expressionparser import ExpressionParser
 
 from ..syntaxtree import FunctionDeclaration, Block, FormalParameter
 
@@ -18,8 +19,8 @@ class FunctionParser(Parser):
         return FunctionDeclaration(line, return_type, function_name, arguments, function_body)
 
     def parse_function_declaration_details(self):
-        return_type = IdentifierParser(self.parserhelper).parse_qualified_identifier()
-        function_name = IdentifierParser(self.parserhelper).parse_qualified_identifier()
+        return_type = ExpressionParser(self.parserhelper).parse_expression()
+        function_name = ExpressionParser(self.parserhelper).parse_expression()
 
         arguments = self.parse_arguments()
 

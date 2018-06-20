@@ -33,3 +33,4 @@ class ASTNode(object):
 
     def codegen(self, output_stream, base_indent=0):
         raise NotImplementedError()
+

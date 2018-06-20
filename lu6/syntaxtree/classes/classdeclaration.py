@@ -1,5 +1,5 @@
 from ..astnode import ASTNode
-from ...contexttable import ContextEntry
+from ...contexttable import ContextEntry, ClassContext
 
 class ClassDeclaration(ASTNode):
     ClassNameVariableName = "$__compiler__classDeclarationName"
@@ -8,36 +8,48 @@ class ClassDeclaration(ASTNode):
     def __init__(self, line, className, extendsName, classBody):
         super().__init__(line)
 
-        self._className = className
-        self._extendsClass = extendsName
-        self._classBody = classBody
+        self._class_name = className
+        self._extends_name = extendsName
+        self._class_body = classBody
 
     def analyse(self, context=None):
-        self.context = self.create_context(context)
+        self.context = context.build_child(ClassContext)
 
-        self._className = self._className.analyse(self.context)
-        if self._extendsClass is not None:
-            self._extendsClass = self._extendsClass.analyse(self.context)
+        self._class_name = self._class_name.analyse(self.context)
+        if self._extends_name is not None:
+            self._extends_name = self._extends_name.analyse(self.context)
 
-        self.context.add(ContextEntry(self.line, ClassDeclaration.ClassNameVariableName, self._className))
-        self.context.add(ContextEntry(self.line, ClassDeclaration.ExtendsNameVariableName, self._extendsClass))
+        self.context.add(ContextEntry(self.line, ClassDeclaration.ClassNameVariableName, self._class_name))
+        self.context.add(ContextEntry(self.line, ClassDeclaration.ExtendsNameVariableName, self._extends_name))
 
-        if self._classBody is not None:
-            self._classBody = self._classBody.analyse(self.context)
+        if self._class_body is not None:
+            self._class_body = self._class_body.analyse(self.context)
 
         return self
 
     def codegen(self, output_stream, base_indent=0):
         output_stream.print("class ", "h_file", base_indent)
-        self._className.codegen(output_stream, base_indent)
+        self._class_name.codegen(output_stream, base_indent)
 
-        if self._extendsClass is not None:
+        if self._extends_name is not None:
             output_stream.print(": public ", "h_file")
-            self._extendsClass.codegen(output_stream, base_indent)
+            self._extends_name.codegen(output_stream, base_indent)
 
-        if self._classBody is not None:
+        if self._class_body is not None:
             output_stream.print(" ", "h_file")
-            self._classBody.codegen(output_stream, base_indent)
+            self._class_body.codegen(output_stream, base_indent)
 
         #output_stream.newline("h_file")
         output_stream.print(";", "h_file")
+
+    @property
+    def class_body(self):
+        return self._class_body
+
+    @property
+    def class_name(self):
+        return self._class_name
+
+    @property
+    def extends_name(self):
+        return self._extends_name

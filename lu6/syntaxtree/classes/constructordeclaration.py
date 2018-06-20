@@ -16,7 +16,6 @@ class ConstructorDeclaration(MethodDeclaration):
 
         return self
 
-
     def codegen(self, output_stream, base_indent=0):
         self.name.codegen(output_stream, base_indent)
         output_stream.print(" ", "h_file", base_indent)

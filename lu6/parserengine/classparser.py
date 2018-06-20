@@ -12,7 +12,7 @@ from .statementparser import StatementParser
 # AST imports
 from ..syntaxtree import AttributeDeclaration, Block, ClassCategory, ClassBody, \
                          ClassDeclaration, ConstructorDeclaration, MethodDeclaration
-from lu6.syntaxtree import modifier, IfStatement
+from lu6.syntaxtree import modifier, IfStatement, WhileStatement
 
 
 class ClassParser(Parser):
@@ -108,6 +108,8 @@ class ClassParser(Parser):
 
         elif self.current_token_is(tokens.SpecialTokens.LCurlyToken):
             return self.parse_class_block()  # Skip ending semicolon
+        else:
+            result = ExpressionParser(self.parserhelper).parse_expression()
 
         self.current_token_must_be(tokens.SpecialTokens.SemiColonToken)
         self.get_next_token()
@@ -148,8 +150,8 @@ class ClassParser(Parser):
         return result
 
     def parse_attribute_declaration(self):
-        attr_type = IdentifierParser(self.parserhelper).parse_qualified_identifier()
-        attr_name = IdentifierParser(self.parserhelper).parse_qualified_identifier()
+        attr_type = ExpressionParser(self.parserhelper).parse_expression()
+        attr_name = ExpressionParser(self.parserhelper).parse_expression()
 
         return attr_type, attr_name
 
@@ -171,7 +173,12 @@ class ClassParser(Parser):
     def parse_statement_member(self):
         line = self.parserhelper.current_line
         if self.current_token_is(tokens.ReservedWordsTokens.WhileToken):
-            pass
+            self.get_next_token()
+            condition = ExpressionParser(self.parserhelper).parse_par_expression()
+            body = self.parse_member_declaration()
+
+            return WhileStatement(line, condition, body)
+
         elif self.current_token_is(tokens.ReservedWordsTokens.IfToken):
             self.get_next_token()
             condition = ExpressionParser(self.parserhelper).parse_par_expression()

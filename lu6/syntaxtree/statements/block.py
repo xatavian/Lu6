@@ -1,5 +1,6 @@
 from .statement import Statement
 from ..expression.binaryexpression import BinaryExpression
+from ...contexttable import BlockContext
 
 
 class Block(Statement):
@@ -26,7 +27,7 @@ class Block(Statement):
         # output_stream.print("}", "h_file", base_indent)
 
     def analyse(self, context=None):
-        self.context = self.create_context(context)
+        self.context = context.build_child(BlockContext)
         for i, statement in enumerate(self._statements):
             self._statements[i] = statement.analyse(self.context)
         return self

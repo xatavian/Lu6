@@ -1,5 +1,5 @@
 from lu6.syntaxtree.astnode import ASTNode
-
+from ...contexttable import Context
 
 class FunctionDeclaration(ASTNode):
     def __init__(self, line, returnType, name, arguments, body):
@@ -64,7 +64,9 @@ class FunctionDeclaration(ASTNode):
         output_stream.newline("h_file")
 
     def analyse(self, context=None):
-        self.context = self.create_context(context)
+        self.context = context.build_child(Context)
+        self._name = self._name.analyse(self.context)
+
         for i, arg in enumerate(self._arguments):
             self._arguments[i] = arg.analyse(context)
 

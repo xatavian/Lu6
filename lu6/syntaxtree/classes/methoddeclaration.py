@@ -1,6 +1,6 @@
 from lu6.syntaxtree.functions.functiondeclaration import FunctionDeclaration
-from lu6.syntaxtree.modifier import CONST, STATIC
-
+from lu6.syntaxtree.modifier import CONST, STATIC, PUBLIC, PROTECTED, PRIVATE
+from ...contexttable import MemberContext
 
 class MethodDeclaration(FunctionDeclaration):
 
@@ -31,4 +31,7 @@ class MethodDeclaration(FunctionDeclaration):
         return self._modifiers
 
     def analyse(self, context=None):
-        return super().analyse(context)
+        super().analyse(context)
+        self.context = context.build_child(MemberContext)
+
+        return self

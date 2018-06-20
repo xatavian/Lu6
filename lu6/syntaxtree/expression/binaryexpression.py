@@ -1,7 +1,7 @@
 from .expression import Expression
 from ...exceptions import TypeCheckingException, TemplateEngineException
 from ..general_interfaces import IGetValue, IValueHolder
-
+from ...tokens import Token
 
 class BinaryExpression(Expression):
     string_operator = None
@@ -61,6 +61,20 @@ class BinaryExpression(Expression):
         lhs_value = BinaryExpression._extract_value_from_expression(self.lhs)
         rhs_value = BinaryExpression._extract_value_from_expression(self.rhs)
 
+        if isinstance(lhs_value, Token) and not isinstance(rhs_value, Token):
+            # If the subexpression values don't have the same type,
+            # Convert both to str
+            lhs_value, rhs_value = [
+                BinaryExpression._strip_quotes( str(lhs_value) ),
+                BinaryExpression._strip_quotes( str(rhs_value) )
+            ]
+
+        elif not isinstance(lhs_value, Token) and isinstance(rhs_value, Token):
+            lhs_value, rhs_value = [
+                BinaryExpression._strip_quotes(str(lhs_value)),
+                BinaryExpression._strip_quotes(str(rhs_value))
+            ]
+
         return self.get_value_operation(lhs_value, rhs_value)
 
     def set_value(self, value):
@@ -70,3 +84,14 @@ class BinaryExpression(Expression):
 
     def get_value_operation(self, lhs, rhs):
         raise NotImplementedError()
+
+    @staticmethod
+    def _strip_quotes(source_string):
+        start_index, end_index = 0, len(source_string)
+        if source_string.startswith("\""):
+            start_index += 1
+        if source_string.endswith("\""):
+            end_index -= 1
+
+        return source_string[start_index:end_index]
+

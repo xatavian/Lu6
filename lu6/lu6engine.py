@@ -3,7 +3,7 @@ from .contexttable import Context, ContextEntry
 from .outputstream import OutputStreamFactory
 from .parserengine import CompilationUnitParser
 from .exceptions import TemplateEngineException
-
+from .sanitizer import TreeSanitizer
 
 class Lu6Engine(object):
     """
@@ -20,7 +20,7 @@ class Lu6Engine(object):
     def __init__(self):
         self._source_type = None
         self._content = None
-        self._external_content = Context()
+        self._external_content = Context(False)
         self._output_file = None
         self._output_type = None
 
@@ -65,7 +65,9 @@ class Lu6Engine(object):
         else:
             stream = OutputStreamFactory.to_file(self._output_file)
 
-        comp_unit.codegen(stream)
+        codegen_tree = TreeSanitizer.build_codegen_tree(comp_unit)
+        codegen_tree.codegen(stream)
+
         if self._output_type == Lu6Engine.OUTPUT_TO_STRING:
             result_cpp, result_h = stream.cpp_stream.getvalue(), stream.h_stream.getvalue()
             OutputStreamFactory.cleanup()

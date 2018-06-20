@@ -1,17 +1,14 @@
 from .astnode import ASTNode
-from ..contexttable import Context
+from ..contexttable import CompilationUnitContext
 
 
 class CompilationUnit(ASTNode):
 
-    def add_type_declaration(self, type_decl):
-        self._typesDeclaration.append(type_decl)
-
     def analyse(self, context=None):
-        self.context = Context(context)
+        self.context = context.build_child(CompilationUnitContext)
 
-        for i, typeDecl in enumerate(self._typesDeclaration):
-            self._typesDeclaration[i] = typeDecl.analyse(self.context)
+        for i, typeDecl in enumerate(self._type_declarations):
+            self._type_declarations[i] = typeDecl.analyse(self.context)
 
         return self
 
@@ -19,7 +16,7 @@ class CompilationUnit(ASTNode):
         super().__init__(line)
 
         self._filename = filename
-        self._typesDeclaration = type_declarations
+        self._type_declarations = type_declarations
         self._includes_list = includes_list
 
     def codegen(self, output_stream, base_indent=0):
@@ -29,5 +26,29 @@ class CompilationUnit(ASTNode):
             output_stream.newline("h_file")
 
         output_stream.newline("h_file")
-        for type_decl in self._typesDeclaration:
+        for type_decl in self._type_declarations:
             type_decl.codegen(output_stream, base_indent)
+
+    @property
+    def filename(self):
+        return self._filename
+
+    @filename.setter
+    def filename(self, value):
+        self._filename = value
+
+    @property
+    def includes(self):
+        return self._includes_list
+
+    @includes.setter
+    def includes(self, value):
+        self._includes_list = value
+
+    @property
+    def type_declarations(self):
+        return self._type_declarations
+
+    @type_declarations.setter
+    def type_declarations(self, value):
+        self._type_declarations = value

@@ -18,6 +18,9 @@ class AbstractPrintStatement(Statement):
     def codegen(self, output_stream, base_indent=0):
         raise NotImplementedError()
 
+    def preCodegen(self, categories=None):
+        pass
+
     @property
     def text(self):
         return self._text

@@ -18,6 +18,9 @@ class StringScanner(Scanner):
             return result
         return None
 
+    def cleanup(self):
+        pass
+
     def on_reset(self):
         self._counter = 0
 

@@ -45,7 +45,7 @@ class Token(object):
         return "Token {type}: {image}".format(type=self._type.name, image=self._image)
 
     def __str__(self):
-        return self.__repr__()
+        return self._image
 
     def __iadd__(self, other):
         self._image += other.image
